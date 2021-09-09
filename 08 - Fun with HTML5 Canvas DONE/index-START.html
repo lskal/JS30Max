@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+</head>
+<body>
+<canvas id="draw" width="800" height="800"></canvas>
+<script>
+
+  const canvas = document.querySelector('#draw');
+  const ctx = canvas.getContext('2d'); /* allows to draw on the page  */
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight; /* settin' the size of the canvas at the size of the window */
+
+  ctx.strokeStyle = '#BADA55';
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  ctx.lineWidth = 100;
+
+  // ctx.globalCompositeOperation = 'luminosity'; /* similar to blend mode in photoshop -> https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation */
+
+  let isDrawing = false;
+  let lastX = 0;
+  let lastY = 0; /* settin' up some variables */
+
+  let hue = 0;
+  let direction = true; 
+
+  function draw(e) {
+    if (!isDrawing) return; /* return the function is mouse is not clicched or other stuff */
+    console.log(e);
+
+    ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`; /* dynamic hue */
+
+    ctx.beginPath();
+    // start from
+    ctx.moveTo(lastX, lastY);
+    // go to
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+    [lastX, lastY] = [e.offsetX, e.offsetY];
+
+    hue >= 360 ? hue = 0 : hue++; /* incrementa la luminosità a ogni movimento del mouse */
+
+    if (ctx.lineWidth >= 150 || ctx.lineWidth <= 50) { direction = !direction };
+  
+    if (direction) {
+      ctx.lineWidth++;
+    } else {
+      ctx.lineWidth--;
+    }
+  }
+
+
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    [lastX, lastY] = [e.offsetX, e.offsetY];
+  });
+  canvas.addEventListener('mouseup', () => isDrawing = false);
+  canvas.addEventListener('mouseout', () => isDrawing = false); /* to avoid to trigger the draw when i'm out of the screen */
+
+</script>
+
+<style>
+  html, body {
+    margin: 0;
+  }
+</style>
+
+</body>
+</html>
