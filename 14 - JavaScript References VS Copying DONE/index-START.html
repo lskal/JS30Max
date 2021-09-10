@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>JS Reference VS Copy</title>
+</head>
+
+<body>
+
+  <script>
+    // start with strings, numbers and booleans
+
+    let age = 100;
+    let age2 = age;
+    // console.log(age, age2); -> `100 100`
+    age = 200;
+    // console.log(age, age2); -> `100 100`
+
+    let name = 'Max';
+    let name2 = name;
+    // console.log(name, name2); -> `Max Max`
+    name = 'xaM';
+    // console.log(name, name2); -> `xaM Max`
+
+
+    // Let's say we have an array
+    const players = ['Wes', 'Sarah', , 'Ryan', 'Poppy'];
+
+    // and we want to make a copy of it.
+
+    const team = players;
+    // console.log(team, players); -> ['Wes', 'Sarah', 'Max', 'Ryan', 'Poppy']
+
+    // You might think we can just do something like this:
+
+    team[2] = 'Max';
+    // console.log(team, players); -> -> ['Wes', 'Sarah', 'Max', 'Ryan', 'Poppy']
+
+    // however what happens when we update that array?
+
+    /* !IMPORTANT! -> we are doing a REFERENCE in the array, WE ARE NOT COPING THE ARRAY <- !IMPORTANT! */
+
+    // now here is the problem!
+
+    // oh no - we have edited the original array too!
+
+    /* Why? It's because that is an array reference, not an array copy. They both point to the same array! */
+
+    // So, how do we fix this? We take a copy instead!
+
+    const team2 = players.slice(); // slice when is used without anything in the commans just passes the whole array back
+    team2[2] = '.slice';
+    console.log(team2);
+
+    // one way
+
+    // or create a new array and concat the old one in
+
+    const team3 = [].concat(players);
+    team3[2] = '.concat';
+    console.log(team3);
+
+    // or use the new ES6 Spread
+
+    const team4 = [...players];
+    team4[2] = 'ES6 spread operator';
+    console.log(team4);
+
+    // or with .from()
+
+    team5 = Array.from(players);
+    team5[2] = 'Array.from()'
+    console.log(team5);
+
+    // now when we update it, the original one isn't changed
+
+    // The same thing goes for objects, let's say we have a person object
+
+    // with Objects
+    const person = {
+      name: 'Wes Bos',
+      age: 80
+    };
+
+    // and think we make a copy:
+
+    const capitan = person;
+    capitan.number = 99;
+    // console.log(capitan, person); -> {name: 'Wes Bos', age: 80, number: 99} {name: 'Wes Bos', age: 80, number: 99} -> we just made a REFERENCE
+
+    // how do we take a copy instead?
+
+    const person2 = {
+      name: 'Wes Bos',
+      age: 40
+    };
+
+    // with Object.assign
+    const capitan2 = Object.assign({}, person2, { number: 66, age: 12 }) /* the first {} is a blank object, person is the object we want to copy, {} is everithing we want to change */
+    console.log('copy with Object.assign({}, objectToCopy, { propriety: value, propriety2: value })');
+    console.log(person2, capitan2);
+
+    // We will hopefully soon see the object ...spread
+
+    const capitan3 = { ...person2 }
+    console.log('copy with ... object spread');
+    console.log(capitan3);
+
+    // Things to note - this is only 1 level deep - both for Arrays and Objects. lodash has a cloneDeep method, but you should think twice before using it.
+
+    const max = {
+      name: 'Max',
+      age: 24,
+      social: {
+        twitter: '@max',
+        facebook: 'max.arosio'
+      }
+    }
+
+    const dev = Object.assign({}, max);
+    dev.name = 'Albi';
+    dev.social.twitter = '@newTwitterHandle';
+    console.log('one level deep clone');
+    console.log(max, dev);
+
+    // will see that i've CLONED AND CHANGES SUCCESSFULY THE OBJECT, but I'M DOING A REFERENCE on the social.twitter string
+    // I can use something called "deep clone" instead, but it can be usefull just few times in a life of a developer
+
+    const max2 = {
+      name: 'Max',
+      age: 24,
+      social: {
+        twitter: '@max',
+        facebook: 'max.arosio'
+      }
+    }
+
+    const dev2 = JSON.parse(JSON.stringify(max)) // I parse max as a json object and i create a new object out of it
+    dev2.social.twitter = '@jsonStringify';
+
+    console.log('deep clone with JSON.parse(JSON.stringify(objectToDeepCopy))');
+    console.log(max2, dev2);
+
+
+  </script>
+
+</body>
+
+</html>
